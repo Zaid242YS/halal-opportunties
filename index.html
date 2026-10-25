@@ -1,0 +1,616 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Furas Tree – Creed-to-Commerce™</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--green:#12432f;--green2:#1f6b4a;--leaf:#dcefe3;--gold:#c9a227;--gold2:#8a6d0f;--cream:#fbf7ea;--paper:#fffdf5;--ink:#1d2a24;--muted:#5b6a62;--line:#ddd3b4;--bark:#6b4a2b;--dunya:#9a6b12;--danger:#a3322b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:"Amiri","Georgia",serif;font-size:17px;line-height:1.55}
+.ar{font-family:"Amiri","Traditional Arabic",serif;direction:rtl}
+header{background:linear-gradient(135deg,var(--green),#0b2c1e);color:#fff;text-align:center;padding:18px 16px 14px;border-bottom:4px solid var(--gold)}
+header .bism{font-size:26px;color:var(--gold);direction:rtl}
+header h1{margin:2px 0 0;font-size:30px;letter-spacing:.3px}
+header h1 .ar{color:var(--gold);margin-inline-start:8px}
+header p{margin:2px auto 0;max-width:760px;font-size:15px;color:#e8ecd9}
+nav{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);display:flex;gap:4px;padding:8px 12px;overflow-x:auto;justify-content:center;flex-wrap:wrap}
+nav button{font:inherit;font-size:16px;border:1px solid var(--line);background:#fff;color:var(--green);padding:6px 16px;border-radius:999px;cursor:pointer}
+nav button.on{background:var(--green);color:#fff;border-color:var(--green)}
+main{max-width:1280px;margin:0 auto;padding:16px}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+h2{margin:0 0 6px;color:var(--green);font-size:24px}
+h3{margin:0 0 4px;color:var(--green);font-size:19px}
+.sub{color:var(--muted);font-size:15px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button.btn{font:inherit;font-size:15px;padding:7px 14px;border-radius:9px;border:1px solid var(--green);background:var(--green);color:#fff;cursor:pointer}
+button.btn.alt{background:#fff;color:var(--green)}
+button.btn.gold{background:var(--gold);border-color:var(--gold2);color:#2a2000}
+button.btn.danger{background:#fff;color:var(--danger);border-color:var(--danger)}
+button.btn:hover{filter:brightness(1.07)}
+input[type=text],input[type=date],select,textarea{font:inherit;font-size:15px;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:70px;resize:vertical}
+label{font-size:14px;color:var(--muted);display:block;margin-bottom:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+/* Tree */
+.treeLayout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media(max-width:1000px){.treeLayout{grid-template-columns:1fr}}
+.treeWrap{overflow-x:auto;background:radial-gradient(ellipse at 50% 30%,#fffef6,#f3ecd0);border:1px solid var(--line);border-radius:14px}
+.treeWrap svg{display:block;min-width:880px;width:100%;height:auto}
+.panel{position:sticky;top:64px}
+.pill{display:inline-block;padding:1px 10px;border-radius:999px;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--green)}
+.pill.deen{background:var(--leaf);border-color:var(--green2)}
+.pill.dunya{background:#f7ebc8;border-color:var(--gold2);color:var(--gold2)}
+.stbtns{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.stbtns button{font:inherit;font-size:14px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;cursor:pointer}
+.stbtns button.on{background:var(--green);color:#fff;border-color:var(--green)}
+.bar{height:12px;background:#ece5c8;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green2),var(--gold))}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:6px 0 10px}
+.legend span::before{content:"";display:inline-block;width:14px;height:14px;border-radius:4px;margin-inline-end:5px;vertical-align:-2px;border:2px solid #b9b199;background:var(--cream)}
+.legend .l1::before{border-style:dashed;border-color:var(--gold2)}
+.legend .l2::before{background:var(--leaf);border-color:var(--green2)}
+.legend .l3::before{background:var(--green);border-color:var(--gold)}
+.node{cursor:pointer}.node:hover rect{stroke-width:3}
+.node.sel rect{stroke:#000;stroke-width:3}
+.node.next rect{animation:pulse 1.8s infinite}
+@keyframes pulse{50%{stroke-width:4.5}}
+.outline details{border:1px solid var(--line);border-radius:10px;background:#fff;margin:6px 0;padding:6px 10px}
+.outline summary{cursor:pointer;font-weight:700;color:var(--green)}
+.outline .ol{display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px dashed var(--line);cursor:pointer}
+.stat{display:inline-block;min-width:120px;text-align:center;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;margin:3px}
+.stat b{display:block;font-size:26px;color:var(--green)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--line);padding:5px 7px;text-align:start;vertical-align:top}
+th{background:var(--leaf);color:var(--green)}
+.scholar{border-inline-start:6px solid var(--gold)}
+.quote{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+.quote .ar{font-size:21px;line-height:1.9;color:var(--green)}
+.tag{font-size:12px;border-radius:6px;padding:1px 7px;background:#f7ebc8;color:var(--gold2);border:1px solid var(--gold2)}
+.disc{font-size:14px;color:var(--muted);border:1px dashed var(--gold2);border-radius:10px;padding:8px 12px;background:#fffaf0}
+footer{text-align:center;padding:18px 12px 30px;color:var(--muted);font-size:14px}
+footer b{color:var(--green)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:9px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:.3s;z-index:50}
+.toast.on{opacity:1}
+/* Report sheet */
+.sheetWrap{overflow-x:auto;background:#d8d2bb;padding:14px;border-radius:12px}
+#reportSheet{width:794px;margin:0 auto;background:#fff;color:#111;padding:36px 40px;font-size:14px;line-height:1.5}
+#reportSheet h1{font-size:26px;margin:0;color:var(--green)}
+#reportSheet h2{font-size:19px;border-bottom:2px solid var(--gold);padding-bottom:3px;margin:0 0 8px}
+#reportSheet .rblock{margin-bottom:14px}
+#reportSheet .rhead{border-bottom:4px solid var(--gold);padding-bottom:8px;margin-bottom:12px;text-align:center}
+#reportSheet .bism{color:var(--gold2);font-size:24px;direction:rtl}
+#reportSheet .quote{padding:6px 10px;margin:5px 0}
+#reportSheet .quote .ar{font-size:18px;line-height:1.7}
+@media print{
+ @page{size:A4;margin:12mm}
+ body *{visibility:hidden}
+ #reportSheet,#reportSheet *{visibility:visible}
+ #reportSheet{position:absolute;left:0;top:0;width:100%;padding:0}
+ #reportSheet .rblock{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="bism ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+  <h1>Furas Tree <span class="ar">شَجَرَةُ الفُرَص</span></h1>
+  <p>From Creed to Commerce™: grow every opportunity (<span class="ar">فُرَص</span>) in Deen and Dunya from the roots to the peak, guided by the voices of Ahlus Sunnah wal Jama‘ah.</p>
+</header>
+<nav id="nav">
+  <button data-tab="tree" class="on">🌳 Tree · الشجرة</button>
+  <button data-tab="journey">🧭 My Journey · رحلتي</button>
+  <button data-tab="scholars">📚 Ten Scholars · العلماء</button>
+  <button data-tab="report">📄 Report &amp; PDF · التقرير</button>
+  <button data-tab="guide">❓ How to Use</button>
+</nav>
+<main>
+
+<!-- TREE -->
+<section id="tab-tree" class="tab on">
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <div>
+        <h2>The Tree of Opportunities <span class="ar">فُرَص</span></h2>
+        <div class="sub"><b>Roots</b> = the Creed (<span class="ar">عَقِيدَة</span>) · <b>Trunk</b> = <span class="ar">فُرْصَة</span> Fursah · <b>Two boughs</b> = Deen &amp; Dunya · <b>Peak</b> = the balanced middle path and the fruit of Commerce. Each branch climbs four levels: Awaken → Strive → Excel → Benefit Others. Tap any box.</div>
+      </div>
+      <div class="row">
+        <button class="btn alt" id="viewTree">Tree view</button>
+        <button class="btn alt" id="viewOutline">Outline view</button>
+      </div>
+    </div>
+    <div class="legend"><span>Not started</span><span class="l1">Planned</span><span class="l2">Practicing</span><span class="l3">Mastered</span><span style="color:var(--gold2)">✦ pulsing = your next step on a branch</span></div>
+    <div id="overallBar"></div>
+  </div>
+  <div class="treeLayout">
+    <div>
+      <div class="treeWrap" id="treeView"></div>
+      <div class="outline" id="outlineView" style="display:none"></div>
+    </div>
+    <aside class="panel card" id="panel"></aside>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section id="tab-journey" class="tab">
+  <div class="card">
+    <h2>My Journey <span class="ar">رِحْلَتِي</span></h2>
+    <div class="grid2">
+      <div><label for="uName">Your name (appears on the report)</label><input type="text" id="uName" placeholder="Name"></div>
+      <div><label for="uFocus">This season's intention (<span class="ar">نِيَّة</span>)</label><input type="text" id="uFocus" placeholder="e.g. To earn halal and serve my family"></div>
+    </div>
+  </div>
+  <div class="card"><h3>Progress &amp; Balance <span class="ar">الميزان</span></h3><div id="jStats"></div></div>
+  <div class="card"><h3>Your Next Steps <span class="ar">الخطوة التالية</span></h3><div class="sub">The lowest unfinished level on every branch.</div><div id="jNext"></div></div>
+  <div class="card">
+    <h3>Opportunity Log <span class="ar">سِجِلُّ الفُرَص</span></h3>
+    <div class="sub">Record each opportunity you noticed, what you did, and the outcome. Entries marked “sample” can be removed in one click.</div>
+    <div class="grid2" style="margin-top:8px">
+      <div><label>Date</label><input type="date" id="lgDate"></div>
+      <div><label>Realm</label><select id="lgSide"><option value="deen">Deen · الدِّين</option><option value="dunya">Dunya · الدُّنْيَا</option></select></div>
+      <div><label>Opportunity spotted</label><input type="text" id="lgSpot" placeholder="What door opened?"></div>
+      <div><label>Action taken</label><input type="text" id="lgAct" placeholder="What did you do?"></div>
+    </div>
+    <div style="margin-top:8px"><label>Outcome / lesson</label><input type="text" id="lgRes" placeholder="Result and what you learned"></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="lgAdd">Add entry</button><button class="btn alt" id="lgCancel" style="display:none">Cancel edit</button></div>
+    <div id="lgList" style="margin-top:10px"></div>
+  </div>
+</section>
+
+<!-- SCHOLARS -->
+<section id="tab-scholars" class="tab">
+  <div class="card">
+    <h2>Ten Scholars of Opportunity <span class="ar">عُلَمَاءُ الفُرَص</span></h2>
+    <div class="sub">Ten trusted voices of Ahlus Sunnah wal Jama‘ah, from the Tabi‘un to the later centuries, whose teaching or lived example turned time, knowledge and livelihood into benefit for ordinary believers.</div>
+    <div class="disc" style="margin-top:8px"><b>Authenticity note:</b> each entry is tagged — <i>Quoted</i> (wording widely reported), <i>Attributed</i> (verse or saying ascribed to the scholar), <i>Teaching summary</i> (my paraphrase of the book's theme) or <i>Lived example</i>. Before teaching, publishing or selling this content, verify wording against the cited source with a qualified teacher. This app is educational and is not a fatwa.</div>
+  </div>
+  <div id="schList"></div>
+</section>
+
+<!-- REPORT -->
+<section id="tab-report" class="tab">
+  <div class="card">
+    <h2>Report &amp; Data <span class="ar">التقرير</span></h2>
+    <div class="row">
+      <button class="btn gold" id="btnPdf">⬇ Download PDF</button>
+      <button class="btn" id="btnPrint">🖨 Print / Save as PDF (sharp text)</button>
+      <button class="btn alt" id="btnSave">💾 Save my data (.json)</button>
+      <button class="btn alt" id="btnLoad">📂 Load data</button>
+      <input type="file" id="fileIn" accept=".json,application/json" style="display:none">
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn danger" id="btnSample">Remove sample data</button>
+      <button class="btn danger" id="btnClear">Clear ALL my data</button>
+    </div>
+    <div class="sub" style="margin-top:8px">Your data is stored only in this browser (local storage). Use “Save my data” to keep a backup file. “Clear ALL” erases every status, note and log entry.</div>
+  </div>
+  <div class="sheetWrap"><div id="reportSheet"></div></div>
+</section>
+
+<!-- GUIDE -->
+<section id="tab-guide" class="tab">
+  <div class="card">
+    <h2>How to Use This App</h2>
+    <ol>
+      <li><b>Explore the Tree.</b> Start at the roots (Niyyah, ‘Ilm, Tawhid, Tawakkul), then climb any Deen or Dunya branch. Each box has an Arabic term, its English parallel, a definition, a concrete behavior and a guiding scholar.</li>
+      <li><b>Set a status.</b> Mark each level Planned, Practicing or Mastered, and add a personal note and target date. Pulsing boxes show your next step.</li>
+      <li><b>Keep the log.</b> Under My Journey, record real opportunities and your response.</li>
+      <li><b>Read the Ten Scholars</b> for the sayings and examples behind the branches.</li>
+      <li><b>Report.</b> Download a PDF, print it, or back up / restore your data. Remove the sample data first, then clear or edit anything at any time.</li>
+    </ol>
+    <div class="disc">Creed-to-Commerce™ principle: every business and life activity flows from, and stays accountable to, a creed. This tool helps the believer convert each fursah into worship and benefit, without neglecting a rightful share of this world (Qur’an 28:77).</div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="ar" style="font-size:20px;color:var(--gold2)">وَابْتَغِ فِيمَا آتَاكَ اللَّهُ الدَّارَ الْآخِرَةَ ۖ وَلَا تَنسَ نَصِيبَكَ مِنَ الدُّنْيَا</div>
+  <div><b>Creed-to-Commerce™</b> · The Balanced Middle Path Academy, LLC (BMPA)</div>
+  <div>Educational use only · Not a fatwa or financial advice</div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+"use strict";
+/* ============ DATA ============ */
+const LV=[{ar:'يَقَظَة',en:'Awaken'},{ar:'مُجَاهَدَة',en:'Strive'},{ar:'إِحْسَان',en:'Excel'},{ar:'نَفْع',en:'Benefit Others'}];
+const ST=[{k:'none',en:'Not started',v:0},{k:'planned',en:'Planned',v:.25},{k:'practicing',en:'Practicing',v:.6},{k:'mastered',en:'Mastered',v:1}];
+
+const SCH={
+hb:{ar:'الحَسَنُ البَصْرِيّ',en:'Al-Hasan al-Basri',yr:'d. 110 AH / 728 CE',role:'Tabi‘i, preacher of Basra',
+ work:'Sermons and counsel (reported in Hilyat al-Awliya’)',
+ impact:'Preached to the common people of a wealthy trading city, turning attention from heedless accumulation to accountable use of one’s days.',
+ tag:'Quoted',srcTxt:'Reported in Hilyat al-Awliya’ and other early works',
+ qar:'يَا ابْنَ آدَمَ، إِنَّمَا أَنْتَ أَيَّامٌ، كُلَّمَا ذَهَبَ يَوْمٌ ذَهَبَ بَعْضُكَ',
+ qen:'“O son of Adam, you are only a number of days; whenever a day goes, a part of you goes.”',
+ path:'Awakening to time: each day is a one-time opportunity.'},
+ah:{ar:'أَبُو حَنِيفَةَ النُّعْمَان',en:'Abu Hanifa al-Nu‘man',yr:'d. 150 AH / 767 CE',role:'Jurist of Kufa and cloth merchant',
+ work:'Founder of the Hanafi school; developed the law of contracts and partnerships',
+ impact:'A working merchant-scholar: his fiqh of sales and partnership (e.g. salam) gave small traders clear, fair rules, and his own trade modeled honesty.',
+ tag:'Lived example',srcTxt:'Classical biographies (e.g. Tarikh Baghdad; Manaqib Abi Hanifa)',
+ qar:'',qen:'He earned his living in the cloth trade while teaching, showing that disciplined work and deep knowledge belong together.',
+ path:'Craft, honest dealing, and trustworthiness in trade.'},
+im:{ar:'عَبْدُ اللَّهِ بْنُ المُبَارَك',en:'‘Abd Allah ibn al-Mubarak',yr:'d. 181 AH / 797 CE',role:'Scholar of hadith, merchant and mujahid of Merv',
+ work:'Kitab al-Zuhd wa’l-Raqa’iq; Kitab al-Jihad',
+ impact:'Reported to have used the profits of his trade to support students of knowledge and the poor, making livelihood a vehicle for ongoing benefit.',
+ tag:'Lived example',srcTxt:'Siyar A‘lam al-Nubala’ (al-Dhahabi) and Tarikh Baghdad',
+ qar:'',qen:'A wealthy trader who traveled for knowledge, hajj and defense of the community, and shared his earnings widely.',
+ path:'Earning in order to give: from profit to ongoing charity.'},
+sh:{ar:'الإِمَامُ الشَّافِعِيّ',en:'Imam al-Shafi‘i',yr:'d. 204 AH / 820 CE',role:'Founder of the Shafi‘i school',
+ work:'Al-Risalah (foundations of jurisprudence); Al-Umm',
+ impact:'Systematized how rulings are derived from the sources, so that ordinary believers could trust consistent guidance; encouraged travel for knowledge and livelihood.',
+ tag:'Attributed',srcTxt:'Verses ascribed to him in Diwan al-Shafi‘i',
+ qar:'وَسَافِرْ فَفِي الأَسْفَارِ خَمْسُ فَوَائِدٍ: تَفَرُّجُ هَمٍّ وَاكْتِسَابُ مَعِيشَةٍ وَعِلْمٌ وَآدَابٌ وَصُحْبَةُ مَاجِدِ',
+ qen:'“Travel — for in travel are five benefits: relief of worry, earning a livelihood, knowledge, refinement, and the company of the noble.”',
+ path:'Seeking knowledge and livelihood by moving toward opportunity.'},
+sy:{ar:'مُحَمَّدُ بْنُ الحَسَنِ الشَّيْبَانِيّ',en:'Muhammad ibn al-Hasan al-Shaybani',yr:'d. 189 AH / 805 CE',role:'Hanafi jurist, student of Abu Hanifa and Abu Yusuf',
+ work:'Kitab al-Kasb (On Earning a Livelihood), as transmitted; Al-Asl; Al-Siyar',
+ impact:'His writing on kasb defended honest earning as part of piety, so that devotion was not mistaken for abandoning work.',
+ tag:'Teaching summary',srcTxt:'Kitab al-Kasb, as transmitted and discussed in al-Sarakhsi’s works',
+ qar:'',qen:'Teaching summary: seeking a lawful livelihood is a legitimate pursuit that supports worship and family, and does not contradict reliance on Allah.',
+ path:'Halal earning and partnership as part of religion.'},
+mw:{ar:'أَبُو الحَسَنِ المَاوَرْدِيّ',en:'Al-Mawardi',yr:'d. 450 AH / 1058 CE',role:'Shafi‘i jurist and judge of Baghdad',
+ work:'Adab al-Dunya wa’l-Din (Ethics of Dunya and Deen); Al-Ahkam al-Sultaniyya',
+ impact:'Wrote directly on the relationship of this world and the religion, showing that public welfare and personal religion support each other.',
+ tag:'Quoted',srcTxt:'Adab al-Dunya wa’l-Din, chapter on the foundations of the world',
+ qar:'قَوَاعِدُ الدُّنْيَا سِتَّةٌ: دِينٌ مُتَّبَعٌ، وَسُلْطَانٌ قَاهِرٌ، وَعَدْلٌ شَامِلٌ، وَأَمْنٌ عَامٌّ، وَخِصْبٌ دَائِمٌ، وَأَمَلٌ فَسِيحٌ',
+ qen:'“The foundations of a flourishing world are six: a followed religion, a prevailing authority, comprehensive justice, general security, lasting abundance, and wide hope.”',
+ path:'Balancing Deen and Dunya; building the conditions in which opportunity grows.'},
+gz:{ar:'أَبُو حَامِدٍ الغَزَالِيّ',en:'Imam al-Ghazali',yr:'d. 505 AH / 1111 CE',role:'Shafi‘i jurist, theologian and spiritual teacher',
+ work:'Ihya’ ‘Ulum al-Din, including its books on self-accounting and on earning and livelihood',
+ impact:'Made inner discipline and the ethics of earning, spending and daily conduct accessible to ordinary readers across the Muslim world.',
+ tag:'Teaching summary',srcTxt:'Ihya’ ‘Ulum al-Din, Book of Muhasabah wa Muraqabah; Book of Adab al-Kasb wa’l-Ma‘ash',
+ qar:'',qen:'Teaching summary: a person’s capital is his time and breaths; the self is a business partner who must be audited daily, so that the profit is not lost.',
+ path:'Self-accounting, contentment, and the ethics of earning.'},
+it:{ar:'تَقِيُّ الدِّينِ ابْنُ تَيْمِيَّة',en:'Ibn Taymiyyah',yr:'d. 728 AH / 1328 CE',role:'Hanbali scholar of Damascus',
+ work:'Al-Hisba fi’l-Islam; Majmu‘ al-Fatawa',
+ impact:'Wrote on the duty to keep markets honest: against fraud, hoarding and exploitation, which protects ordinary buyers and sellers.',
+ tag:'Teaching summary',srcTxt:'Al-Hisba fi’l-Islam; Majmu‘ al-Fatawa (sections on transactions)',
+ qar:'',qen:'Teaching summary: public markets must be governed by justice and truthfulness; deceit and exploitation are not “business as usual.”',
+ path:'Fair markets, avoiding riba and fraud, sincere counsel.'},
+iq:{ar:'ابْنُ قَيِّمِ الجَوْزِيَّة',en:'Ibn al-Qayyim',yr:'d. 751 AH / 1350 CE',role:'Hanbali scholar and student of Ibn Taymiyyah',
+ work:'Al-Fawa’id; Madarij al-Salikin; Al-Wabil al-Sayyib',
+ impact:'His accessible works on the heart, gratitude and patience guide ordinary believers in using time and tests well.',
+ tag:'Quoted',srcTxt:'Al-Fawa’id',
+ qar:'إِضَاعَةُ الوَقْتِ أَشَدُّ مِنَ المَوْتِ؛ لِأَنَّ إِضَاعَةَ الوَقْتِ تَقْطَعُكَ عَنِ اللَّهِ وَالدَّارِ الآخِرَةِ، وَالمَوْتُ يَقْطَعُكَ عَنِ الدُّنْيَا وَأَهْلِهَا',
+ qen:'“Wasting time is worse than death: wasting time cuts you off from Allah and the Hereafter, while death cuts you off from this world and its people.”',
+ path:'Guarding time; patience and gratitude.'},
+ir:{ar:'ابْنُ رَجَبٍ الحَنْبَلِيّ',en:'Ibn Rajab al-Hanbali',yr:'d. 795 AH / 1393 CE',role:'Hanbali hadith scholar of Baghdad and Damascus',
+ work:'Jami‘ al-‘Ulum wa’l-Hikam (commentary on the Forty Hadith); Latai’f al-Ma‘arif',
+ impact:'His commentaries brought the Prophetic teachings on shortening hope and seizing time to the general reader, with a seasonal focus on opportunities in the year.',
+ tag:'Quoted',srcTxt:'Hadith of Ibn ‘Umar (Sahih al-Bukhari 6416) in Jami‘ al-‘Ulum wa’l-Hikam, hadith 40',
+ qar:'كُنْ فِي الدُّنْيَا كَأَنَّكَ غَرِيبٌ أَوْ عَابِرُ سَبِيلٍ … إِذَا أَمْسَيْتَ فَلَا تَنْتَظِرِ الصَّبَاحَ، وَإِذَا أَصْبَحْتَ فَلَا تَنْتَظِرِ المَسَاءَ، وَخُذْ مِنْ صِحَّتِكَ لِمَرَضِكَ وَمِنْ حَيَاتِكَ لِمَوْتِكَ',
+ qen:'Prophetic hadith commented on by Ibn Rajab: “Be in this world as a stranger or a traveler … When evening comes, do not wait for morning; when morning comes, do not wait for evening; take from your health for your illness and from your life for your death.”',
+ path:'Shortening hope and acting now; service and sincerity.'}
+};
+const SCH_ORDER=['hb','ah','im','sh','sy','mw','gz','it','iq','ir'];
+
+/* node: [arabic, english, definition, behavior, scholar] */
+const TRACKS=[
+{id:'d1',side:'deen',ar:'العِبَادَة',en:'Worship',n:[
+ ['المُحَافَظَة','Guarding Prayer','Treating each prayer time as a daily appointment with Allah. The prayer window comes and goes: the most basic fursah.','Pray the five prayers on time for 7 days; set reminders.','hb'],
+ ['النَّوَافِل','Voluntary Acts','Adding optional good deeds beyond the obligations.','Add one fixed sunnah prayer or 10 minutes of dhikr daily.','ir'],
+ ['الخُشُوع','Presence of Heart','Doing worship with attention and meaning, not by habit alone.','Take 30 seconds of stillness before each prayer; study the meaning of one surah.','gz'],
+ ['القُدْوَة','Leading by Example','Bringing family and friends into worship through your own consistency.','Lead a short weekly family prayer or Qur’an session.','ir']]},
+{id:'d2',side:'deen',ar:'العِلْم',en:'Knowledge',n:[
+ ['الطَّلَب','Seeking','Learning the obligatory basics of belief, worship and transactions first.','Choose a trustworthy teacher or course; study 20 minutes daily.','sh'],
+ ['الفَهْم','Understanding','Moving from memorizing to grasping the proof and wisdom.','Summarize each lesson in three lines; ask a qualified teacher one question weekly.','iq'],
+ ['العَمَل','Acting Upon It','Knowledge is completed by action.','Convert each lesson into one concrete habit.','gz'],
+ ['التَّعْلِيم','Teaching','Passing on what you have learned, within your ability.','Teach one person one benefit every week.','sh']]},
+{id:'d3',side:'deen',ar:'التَّزْكِيَة',en:'Purification',n:[
+ ['التَّوْبَة','Repentance','Turning back to Allah and leaving the sin, regret, and resolve.','Seek forgiveness nightly; name one habit to leave.','hb'],
+ ['المُحَاسَبَة','Self-Accounting','Auditing yourself daily before you are audited.','Spend 5 minutes nightly: which opportunities did I take or waste today?','gz'],
+ ['الصَّبْر وَالشُّكْر','Patience &amp; Gratitude','Patience in hardship and thanks in ease.','Write 3 blessings and 1 test handled with patience each day.','iq'],
+ ['الإِخْلَاص','Sincerity','Seeking Allah’s face alone.','Do one hidden good deed each week without announcing it.','ir']]},
+{id:'d4',side:'deen',ar:'الأَخْلَاق',en:'Character',n:[
+ ['الصِّدْق','Truthfulness','Honest speech and honest dealing.','Go 7 days without exaggeration or “white” lies.','hb'],
+ ['الأَمَانَة','Trustworthiness','Keeping trusts, deadlines and promises.','Log every promise this week and keep each one.','ah'],
+ ['الحِلْم','Forbearance','Controlling anger and responding with wisdom.','Pause 10 seconds before replying when angry, especially online.','gz'],
+ ['الرَّحْمَة','Mercy','Active kindness to those who cannot repay.','Perform one weekly act of mercy for someone in need.','im']]},
+{id:'d5',side:'deen',ar:'الخِدْمَة',en:'Service',n:[
+ ['النَّصِيحَة','Sincere Counsel','Wanting good for others and saying it with wisdom.','Offer one gentle private word of advice or encouragement.','it'],
+ ['صِلَةُ الرَّحِم','Kinship Ties','Maintaining relations with relatives.','Contact one relative every week.','mw'],
+ ['خِدْمَةُ المُجْتَمَع','Community Service','Using your time and skills for your neighbors and masjid.','Volunteer a few hours each month.','im'],
+ ['الصَّدَقَةُ الجَارِيَة','Ongoing Charity','A deed whose reward continues after you.','Set up a recurring donation or contribute to a waqf share.','im']]},
+{id:'w1',side:'dunya',ar:'الكَسْب',en:'Halal Earning',n:[
+ ['طَلَبُ الحَلَال','Seeking the Lawful','Earning only from lawful sources, avoiding doubtful income.','List your income sources; replace one doubtful source with a lawful one.','sy'],
+ ['الإِتْقَان','Excellence in Craft','Doing work well and completely.','Set one quality standard and meet it for 30 days.','ah'],
+ ['القَنَاعَة','Contentment','Being satisfied with sufficiency and avoiding greed.','Define your “enough” number and review it monthly.','gz'],
+ ['الإِنْفَاق','Spending in Good','Directing part of earnings to family, charity and knowledge.','Assign a fixed percentage of income to giving.','im']]},
+{id:'w2',side:'dunya',ar:'التِّجَارَة',en:'Trade',n:[
+ ['الصِّدْقُ فِي البَيْع','Honest Dealing','Disclosing defects, fair price and clear terms.','Write clear terms for every sale and disclose limits.','ah'],
+ ['اجْتِنَابُ الرِّبَا','Avoiding Riba','Choosing interest-free alternatives.','Replace one interest-based product with a halal alternative.','it'],
+ ['الشَّرَاكَة','Partnership','Sharing profit and risk through lawful partnership.','Draft a written partnership agreement with a qualified adviser.','sy'],
+ ['المَشْرُوعُ النَّافِع','Serving Enterprise','A business that solves a real need and creates work for others.','Define the community problem your business solves and one job it could create.','im']]},
+{id:'w3',side:'dunya',ar:'الصَّنْعَة',en:'Skill &amp; Craft',n:[
+ ['تَعَلُّمُ المَهَارَة','Learning a Skill','Choosing a useful lawful skill and practicing it.','Pick one marketable skill; practice 30 minutes daily.','sh'],
+ ['الاحْتِرَاف','Mastery','Moving from beginner to reliable professional.','Build a portfolio and request feedback from three clients.','ah'],
+ ['الابْتِكَار','Innovation','Finding better and more beneficial ways.','Solve one real community problem with a new idea.','mw'],
+ ['تَدْرِيبُ الآخَرِين','Training Others','Multiplying benefit by teaching your skill.','Mentor one person for 90 days.','sh']]},
+{id:'w4',side:'dunya',ar:'العُمْرَان',en:'Cultivation',n:[
+ ['الغَرْس','Planting','Starting something beneficial even when results are far; see the hadith of the sapling (Ahmad).','Plant, start or launch one small project this month.','mw'],
+ ['الإِصْلَاح','Stewardship','Caring for resources and the environment as a trust.','Do a waste and water audit at home or work.','it'],
+ ['الاسْتِدَامَة','Sustainability','Designing systems that last.','Document one process so it can run without you.','mw'],
+ ['الوَقْف','Endowment','Dedicating a productive asset for lasting benefit.','Study the structure of a waqf and plan a small one.','im']]},
+{id:'w5',side:'dunya',ar:'التَّدْبِير',en:'Time &amp; Wealth',n:[
+ ['قِيمَةُ الوَقْت','Valuing Time','Time is the first capital.','Track your time for 3 days and remove one wasted hour.','iq'],
+ ['المِيزَانِيَّة','Budgeting','Planning income and spending with intention.','Create a monthly budget: needs, savings, giving.','gz'],
+ ['الاسْتِثْمَارُ الحَلَال','Halal Investing','Growing wealth within lawful limits after an emergency fund.','Learn halal screens; invest only after a safety reserve.','sy'],
+ ['الزَّكَاةُ وَالإِحْسَان','Zakah &amp; Giving','Purifying wealth and giving beyond the minimum.','Compute zakah annually and pay it on time.','ir']]}
+];
+const ROOTS=[
+{id:'r1',ar:'نِيَّة',en:'Niyyah · Intention',def:'“Actions are by intentions” (Bukhari and Muslim). Intention turns an ordinary opportunity into worship and gives the whole tree its direction.',act:'Before each task today, renew your intention silently.'},
+{id:'r2',ar:'عِلْم',en:'‘Ilm · Knowledge',def:'Knowing what is lawful and unlawful and how to act. Without knowledge, opportunity is misread and lost.',act:'Study one rule related to your work or worship each week.'},
+{id:'r3',ar:'تَوْحِيد',en:'Tawhid · Creed',def:'Belief that Allah alone provides (al-Razzaq) and grants every opening. The Creed is the source from which Commerce flows.',act:'Begin each venture with the Basmala and gratitude.'},
+{id:'r4',ar:'تَوَكُّل',en:'Tawakkul · Reliance',def:'Reliance on Allah together with effort: “Tie it, then rely” (reported by al-Tirmidhi). Effort and trust are both required.',act:'For one pending decision, list your efforts, then make du‘a.'}];
+const TRUNK={ar:'فُرْصَة',en:'Fursah · Opportunity',def:'From the Arabic for an opportune moment or turn (<span class="ar">نُهْزَة</span>); plural <span class="ar">فُرَص</span>. An opportunity is a window of time, means and ability that Allah opens and then closes. The Prophet ﷺ said: “Take advantage of five before five: your youth before old age, your health before sickness, your wealth before poverty, your free time before being busy, and your life before death” (al-Hakim; graded sahih).',act:'Choose today one opening you have, and decide how to use it before it closes.'};
+const CROWN={ar:'الوَسَطِيَّة',en:'Wasatiyyah · Balanced Middle Path',def:'“And thus We made you a middle community” (2:143). The peak of the tree is a life where Deen and Dunya support each other: “Seek the Hereafter with what Allah has given you, and do not forget your share of this world” (28:77). Its fruit is <span class="ar">بَرَكَة</span> Barakah and <span class="ar">فَلَاح</span> Falah — Commerce carried by Creed.',act:'Check your balance on the Journey tab; strengthen the lower side.'};
+
+/* ============ STATE ============ */
+const KEY='bmpa_furas_tree_v1';
+const today=()=>new Date().toISOString().slice(0,10);
+function freshState(withSample){
+  const s={name:'',focus:'',status:{},notes:{},dates:{},log:[],sampleKeys:[]};
+  if(withSample){
+    const set=(k,v,n)=>{s.status[k]=v;if(n)s.notes[k]=n;s.sampleKeys.push(k)};
+    set('d1-1','mastered','SAMPLE: Prayers on time all week.');
+    set('d1-2','practicing','SAMPLE: Adding two rak‘ahs after Maghrib.');
+    set('d2-1','practicing');
+    set('w1-1','planned','SAMPLE: Review income sources.');
+    set('w5-1','practicing','SAMPLE: Time audit in progress.');
+    s.log.push({id:'s1',date:today(),side:'deen',spot:'SAMPLE: Free hour after Fajr',action:'Read one page of tafsir',result:'Calm and focused start',sample:true});
+    s.log.push({id:'s2',date:today(),side:'dunya',spot:'SAMPLE: Customer asked for a custom order',action:'Quoted clear terms in writing',result:'Order confirmed, fair price',sample:true});
+  }
+  return s;
+}
+let S;
+function load(){try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(freshState(false),JSON.parse(r));return}}catch(e){}S=freshState(true)}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+load();
+
+/* ============ HELPERS ============ */
+const $=s=>document.querySelector(s);
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const strip=t=>t.replace(/[ً-ٰٟ]/g,'').replace(/&amp;/g,'&');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
+const nid=(tr,i)=>tr.id+'-'+(i+1);
+const stOf=id=>S.status[id]||'none';
+const val=id=>ST.find(x=>x.k===stOf(id)).v;
+function sidePct(side){const tr=TRACKS.filter(t=>t.side===side);let sum=0,n=0;tr.forEach(t=>t.n.forEach((_,i)=>{sum+=val(nid(t,i));n++}));return Math.round(100*sum/n)}
+function counts(){const c={none:0,planned:0,practicing:0,mastered:0};TRACKS.forEach(t=>t.n.forEach((_,i)=>c[stOf(nid(t,i))]++));return c}
+function nextOf(t){for(let i=0;i<4;i++)if(stOf(nid(t,i))!=='mastered')return i;return -1}
+function findNode(id){const [tid,l]=id.split('-');const tr=TRACKS.find(t=>t.id===tid);return tr&&l?{tr,i:+l-1,n:tr.n[+l-1]}:null}
+let selected='trunk';
+
+/* ============ TREE SVG ============ */
+const XS=[80,190,300,410,520,680,790,900,1010,1120];
+const YS=[500,395,290,185];
+function nodeSVG(x,y,ar,en,cls,id,st,isNext){
+  const stroke={none:'#b9b199',planned:'#8a6d0f',practicing:'#1f6b4a',mastered:'#c9a227'}[st];
+  const fill={none:'#fffdf5',planned:'#fff7da',practicing:'#dcefe3',mastered:'#12432f'}[st];
+  const dash=st==='planned'?'stroke-dasharray="5 3"':'';
+  const col=st==='mastered'?'#fff':'#12432f';
+  const a=strip(ar).length,af=a>13?11:a>9?13:15;
+  const ef=strip(en).length>17?8.3:9.5;
+  return `<g class="node ${cls||''} ${id===selected?'sel':''} ${isNext?'next':''}" data-id="${id}" tabindex="0" role="button" aria-label="${esc(strip(en))}">
+   <rect x="${x-52}" y="${y-23}" width="104" height="46" rx="10" fill="${fill}" stroke="${stroke}" stroke-width="2.2" ${dash}/>
+   <text x="${x}" y="${y-3}" text-anchor="middle" font-size="${af}" fill="${col}" font-family="Amiri,serif" font-weight="700">${ar}</text>
+   <text x="${x}" y="${y+14}" text-anchor="middle" font-size="${ef}" fill="${st==='mastered'?'#f3e7b0':'#5b6a62'}" font-family="Georgia,serif">${en}${st==='mastered'?' ✓':''}</text></g>`;
+}
+function buildTree(){
+  let s=`<svg viewBox="0 0 1200 1040" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tree of opportunities">`;
+  s+=`<defs><linearGradient id="trk" x1="0" x2="1"><stop offset="0" stop-color="#5a3d22"/><stop offset=".5" stop-color="#7d5832"/><stop offset="1" stop-color="#5a3d22"/></linearGradient></defs>`;
+  s+=`<text x="600" y="20" text-anchor="middle" font-size="14" fill="#8a6d0f" font-family="Amiri,serif" font-weight="700">THE COMMERCE · Fruit: بَرَكَة Barakah · فَلَاح Falah</text>`;
+  s+=`<rect x="0" y="925" width="1200" height="115" fill="#6b4a2b" opacity=".12"/>`;
+  // roots
+  const rx=[190,420,780,1010];
+  ROOTS.forEach((r,i)=>{s+=`<path d="M600,905 C${600+(rx[i]-600)*.3},${925+(i%2)*10} ${rx[i]},925 ${rx[i]},948" stroke="url(#trk)" stroke-width="${i%3==0?9:7}" fill="none" stroke-linecap="round"/>`});
+  // trunk
+  s+=`<path d="M566,925 C575,860 588,790 572,735 L628,735 C612,790 625,860 634,925 Z" fill="url(#trk)"/>`;
+  // boughs
+  s+=`<path d="M600,748 C585,690 520,666 400,664 S150,662 60,654" stroke="url(#trk)" stroke-width="15" fill="none" stroke-linecap="round"/>`;
+  s+=`<path d="M600,748 C615,690 680,666 800,664 S1050,662 1140,654" stroke="url(#trk)" stroke-width="15" fill="none" stroke-linecap="round"/>`;
+  s+=`<g class="node ${selected==='trunk'?'sel':''}" data-id="trunk" tabindex="0" role="button"><rect x="535" y="790" width="130" height="64" rx="14" fill="#fffdf5" stroke="#c9a227" stroke-width="2.5"/><text x="600" y="822" text-anchor="middle" font-size="26" fill="#12432f" font-family="Amiri,serif" font-weight="700">فُرْصَة</text><text x="600" y="843" text-anchor="middle" font-size="11" fill="#5b6a62" font-family="Georgia,serif">Fursah · Opportunity</text></g>`;
+  s+=`<text x="300" y="712" text-anchor="middle" font-size="22" fill="#12432f" font-family="Amiri,serif" font-weight="700">الدِّين · DEEN</text>`;
+  s+=`<text x="900" y="712" text-anchor="middle" font-size="22" fill="#9a6b12" font-family="Amiri,serif" font-weight="700">الدُّنْيَا · DUNYA</text>`;
+  // crown
+  TRACKS.forEach((t,ti)=>{const x=XS[ti];s+=`<path d="M${x},162 Q${x},112 600,92" stroke="${t.side==='deen'?'#1f6b4a':'#c9a227'}" stroke-width="2" fill="none" stroke-dasharray="4 4" opacity=".6"/>`});
+  s+=`<g class="node ${selected==='crown'?'sel':''}" data-id="crown" tabindex="0" role="button"><rect x="410" y="36" width="380" height="58" rx="29" fill="#12432f" stroke="#c9a227" stroke-width="3"/><text x="600" y="63" text-anchor="middle" font-size="25" fill="#c9a227" font-family="Amiri,serif" font-weight="700">الوَسَطِيَّة</text><text x="600" y="83" text-anchor="middle" font-size="12" fill="#fff" font-family="Georgia,serif">Wasatiyyah · Balanced Middle Path</text></g>`;
+  // level labels centre
+  LV.forEach((l,i)=>{s+=`<text x="600" y="${YS[i]-4}" text-anchor="middle" font-size="12" fill="#8a6d0f" font-family="Amiri,serif" font-weight="700">${l.ar}</text><text x="600" y="${YS[i]+9}" text-anchor="middle" font-size="8" fill="#5b6a62" font-family="Georgia,serif">L${i+1} ${l.en}</text>`});
+  // tracks
+  TRACKS.forEach((t,ti)=>{
+    const x=XS[ti],deen=t.side==='deen',col=deen?'#12432f':'#7a5410';
+    s+=`<path d="M${x},668 L${x},185" stroke="#6b4a2b" stroke-width="6" stroke-linecap="round"/>`;
+    for(let k=0;k<3;k++){const y=(YS[k]+YS[k+1])/2;s+=`<ellipse cx="${x-9}" cy="${y}" rx="9" ry="4" transform="rotate(-35 ${x-9} ${y})" fill="#4f9a6f" opacity=".7"/><ellipse cx="${x+9}" cy="${y}" rx="9" ry="4" transform="rotate(35 ${x+9} ${y})" fill="#4f9a6f" opacity=".7"/>`}
+    s+=`<g><rect x="${x-52}" y="560" width="104" height="46" rx="10" fill="${col}"/><text x="${x}" y="581" text-anchor="middle" font-size="16" fill="#f1dc8a" font-family="Amiri,serif" font-weight="700">${t.ar}</text><text x="${x}" y="597" text-anchor="middle" font-size="10" fill="#fff" font-family="Georgia,serif">${t.en}</text></g>`;
+    const nx=nextOf(t);
+    t.n.forEach((n,i)=>{s+=nodeSVG(x,YS[i],n[0],n[1],'',nid(t,i),stOf(nid(t,i)),i===nx)});
+  });
+  // root labels
+  ROOTS.forEach((r,i)=>{const x=rx[i];s+=`<g class="node ${selected===r.id?'sel':''}" data-id="${r.id}" tabindex="0" role="button"><rect x="${x-75}" y="946" width="150" height="48" rx="12" fill="#fffdf5" stroke="#6b4a2b" stroke-width="2.2"/><text x="${x}" y="969" text-anchor="middle" font-size="19" fill="#12432f" font-family="Amiri,serif" font-weight="700">${r.ar}</text><text x="${x}" y="986" text-anchor="middle" font-size="10.5" fill="#5b6a62" font-family="Georgia,serif">${r.en}</text></g>`});
+  s+=`<text x="600" y="1024" text-anchor="middle" font-size="14" fill="#6b4a2b" font-family="Amiri,serif" font-weight="700">THE CREED · Roots of Creed-to-Commerce™ · عَقِيدَة</text>`;
+  s+='</svg>';
+  $('#treeView').innerHTML=s;
+}
+function buildOutline(){
+  let h='';
+  ['deen','dunya'].forEach(side=>{
+    h+=`<h3 style="margin-top:10px">${side==='deen'?'Deen · الدِّين':'Dunya · الدُّنْيَا'}</h3>`;
+    TRACKS.filter(t=>t.side===side).forEach(t=>{
+      h+=`<details><summary><span class="ar">${t.ar}</span> · ${t.en}</summary>`;
+      t.n.forEach((n,i)=>{const st=stOf(nid(t,i));h+=`<div class="ol" data-id="${nid(t,i)}"><span>L${i+1} <span class="ar">${n[0]}</span> · ${n[1]}</span><span class="pill ${side}">${ST.find(x=>x.k===st).en}</span></div>`});
+      h+='</details>';
+    });
+  });
+  h+=`<h3 style="margin-top:10px">Roots · Trunk · Crown</h3><div class="card">`+[...ROOTS.map(r=>[r.id,r.ar,r.en]),['trunk',TRUNK.ar,TRUNK.en],['crown',CROWN.ar,CROWN.en]].map(a=>`<div class="ol" data-id="${a[0]}"><span class="ar">${a[1]}</span><span>${a[2]}</span></div>`).join('')+'</div>';
+  $('#outlineView').innerHTML=h;
+}
+
+/* ============ PANEL ============ */
+function renderPanel(){
+  const p=$('#panel');const id=selected;
+  const info=ROOTS.find(r=>r.id===id)||(id==='trunk'?TRUNK:null)||(id==='crown'?CROWN:null);
+  if(info){
+    p.innerHTML=`<div class="pill">${id.startsWith('r')?'Root · الجذور':id==='trunk'?'Trunk · الجذع':'Crown · القمة'}</div><h2 class="ar" style="font-size:34px;margin:6px 0 0">${info.ar}</h2><h3>${info.en}</h3><p>${info.def}</p><div class="quote"><b>Practice:</b> ${info.act}</div>`;
+    return;
+  }
+  const f=findNode(id);if(!f){return}
+  const {tr,i,n}=f;const sc=SCH[n[4]];const st=stOf(id);
+  p.innerHTML=`<div class="row"><span class="pill ${tr.side}">${tr.side==='deen'?'Deen':'Dunya'} · <span class="ar">${tr.ar}</span> ${tr.en}</span><span class="pill">Level ${i+1}: ${LV[i].en} · <span class="ar">${LV[i].ar}</span></span></div>
+  <h2 class="ar" style="font-size:34px;margin:6px 0 0">${n[0]}</h2><h3>${n[1]}</h3>
+  <p>${n[2]}</p>
+  <div class="quote"><b>Behavior to practice:</b> ${n[3]}</div>
+  <div class="sub">Guiding voice: <a href="#" data-sch="${n[4]}" style="color:var(--green)"><span class="ar">${sc.ar}</span> · ${sc.en}</a></div>
+  <div class="stbtns" id="stBtns">${ST.map(x=>`<button data-st="${x.k}" class="${x.k===st?'on':''}">${x.en}</button>`).join('')}</div>
+  <label>Target date</label><input type="date" id="pDate" value="${esc(S.dates[id]||'')}">
+  <label style="margin-top:6px">My note</label><textarea id="pNote" placeholder="What will I do? What did I notice?">${esc(S.notes[id]||'')}</textarea>`;
+}
+function adopt(id){const k=S.sampleKeys.indexOf(id);if(k>-1)S.sampleKeys.splice(k,1)}
+
+/* ============ JOURNEY ============ */
+function bar(p){return `<div class="bar"><i style="width:${p}%"></i></div>`}
+function renderJourney(){
+  $('#uName').value=S.name||'';$('#uFocus').value=S.focus||'';
+  const c=counts(),d=sidePct('deen'),w=sidePct('dunya');
+  const bal=Math.abs(d-w);
+  const msg=bal<=10?'Your two boughs are well balanced. Keep climbing together.':(d<w?'Your Dunya bough is ahead of your Deen bough. Strengthen worship, knowledge and character so that livelihood stays rooted in Creed.':'Your Deen bough is ahead of your Dunya bough. Add halal earning, skill and stewardship so that faith is expressed in useful work.');
+  $('#jStats').innerHTML=`<div>${['mastered','practicing','planned','none'].map(k=>`<span class="stat"><b>${c[k]}</b>${ST.find(x=>x.k===k).en}</span>`).join('')}</div>
+  <div class="grid2" style="margin-top:8px"><div><b>Deen · الدِّين</b> ${d}%${bar(d)}</div><div><b>Dunya · الدُّنْيَا</b> ${w}%${bar(w)}</div></div><p class="sub">${msg}</p>`;
+  $('#jNext').innerHTML='<table><tr><th>Branch</th><th>Next level</th><th>Behavior</th><th>Status</th></tr>'+TRACKS.map(t=>{const i=nextOf(t);if(i<0)return `<tr><td><span class="ar">${t.ar}</span> ${t.en}</td><td colspan="3">All levels mastered. Barakah!</td></tr>`;const n=t.n[i],id=nid(t,i);return `<tr data-id="${id}" style="cursor:pointer"><td><span class="ar">${t.ar}</span> ${t.en}</td><td>L${i+1} <span class="ar">${n[0]}</span> · ${n[1]}</td><td>${n[3]}</td><td>${ST.find(x=>x.k===stOf(id)).en}</td></tr>`}).join('')+'</table>';
+  renderLog();
+}
+let editLog=null;
+function renderLog(){
+  const L=[...S.log].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  $('#lgList').innerHTML=L.length?'<table><tr><th>Date</th><th>Realm</th><th>Opportunity</th><th>Action</th><th>Outcome</th><th></th></tr>'+L.map(e=>`<tr><td>${esc(e.date)}</td><td>${e.side==='deen'?'Deen':'Dunya'}</td><td>${esc(e.spot)}${e.sample?' <span class="tag">sample</span>':''}</td><td>${esc(e.action)}</td><td>${esc(e.result)}</td><td style="white-space:nowrap"><button class="btn alt" data-edit="${e.id}">Edit</button> <button class="btn danger" data-del="${e.id}">Delete</button></td></tr>`).join('')+'</table>':'<div class="sub">No entries yet.</div>';
+}
+
+/* ============ SCHOLARS ============ */
+function schCard(id,compact){
+  const s=SCH[id];
+  const used=[];TRACKS.forEach(t=>t.n.forEach((n,i)=>{if(n[4]===id)used.push(`${t.en} L${i+1}`)}));
+  return `<div class="card scholar" id="sch-${id}"><div class="row" style="justify-content:space-between"><div><h3><span class="ar" style="font-size:24px">${s.ar}</span> · ${s.en}</h3><div class="sub">${s.yr} · ${s.role}</div></div><span class="tag">${s.tag}</span></div>
+  <p><b>Contribution to everyday lives:</b> ${s.impact}</p><p class="sub"><b>Work:</b> ${s.work}</p>
+  <div class="quote">${s.qar?`<div class="ar">${s.qar}</div>`:''}<div>${s.qen}</div><div class="sub">Source: ${s.srcTxt}</div></div>
+  <p class="sub"><b>Opportunity path:</b> ${s.path}${compact?'':`<br><b>Linked boxes:</b> ${used.join(', ').replace(/&amp;/g,'&')||'—'}`}</p></div>`;
+}
+function renderScholars(){$('#schList').innerHTML=SCH_ORDER.map(id=>schCard(id)).join('')}
+
+/* ============ REPORT ============ */
+function renderReport(){
+  const c=counts(),d=sidePct('deen'),w=sidePct('dunya');
+  let h=`<div class="rblock rhead"><div class="bism ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div><h1>Furas Tree Report · <span class="ar">تَقْرِيرُ الفُرَص</span></h1><div>Creed-to-Commerce™ · The Balanced Middle Path Academy, LLC (BMPA)</div><div style="color:#555">Prepared for: <b>${esc(S.name)||'—'}</b> · Date: ${today()}</div></div>`;
+  h+=`<div class="rblock"><h2>Intention · نِيَّة</h2><div>${esc(S.focus)||'Not yet written.'}</div></div>`;
+  h+=`<div class="rblock"><h2>Summary · الخُلَاصَة</h2><div>Mastered: <b>${c.mastered}</b> · Practicing: <b>${c.practicing}</b> · Planned: <b>${c.planned}</b> · Not started: <b>${c.none}</b></div><div style="margin-top:6px">Deen · الدِّين: <b>${d}%</b> &nbsp; Dunya · الدُّنْيَا: <b>${w}%</b> &nbsp; Gap: <b>${Math.abs(d-w)} points</b></div>
+  <div style="display:flex;gap:10px;margin-top:6px"><div style="flex:1"><div style="height:12px;background:#ece5c8;border-radius:9px;overflow:hidden"><div style="height:12px;width:${d}%;background:#1f6b4a"></div></div></div><div style="flex:1"><div style="height:12px;background:#ece5c8;border-radius:9px;overflow:hidden"><div style="height:12px;width:${w}%;background:#c9a227"></div></div></div></div></div>`;
+  ['deen','dunya'].forEach(side=>{
+    h+=`<div class="rblock"><h2>${side==='deen'?'Deen · الدِّين':'Dunya · الدُّنْيَا'} — Branches</h2><table><tr><th>Branch</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th></tr>`;
+    TRACKS.filter(t=>t.side===side).forEach(t=>{h+=`<tr><td><span class="ar">${t.ar}</span> ${t.en}</td>`+t.n.map((n,i)=>`<td><span class="ar">${n[0]}</span><br>${n[1]}<br><b>${ST.find(x=>x.k===stOf(nid(t,i))).en}</b></td>`).join('')+'</tr>'});
+    h+='</table></div>';
+  });
+  const notes=[];TRACKS.forEach(t=>t.n.forEach((n,i)=>{const id=nid(t,i);if(S.notes[id]||S.dates[id])notes.push([n,t,i,id])}));
+  h+=`<div class="rblock"><h2>Commitments &amp; Notes · الالتزامات</h2>`+(notes.length?'<table><tr><th>Box</th><th>Status</th><th>Target</th><th>Note</th></tr>'+notes.map(a=>`<tr><td>${a[1].en} L${a[2]+1}: <span class="ar">${a[0][0]}</span> ${a[0][1]}</td><td>${ST.find(x=>x.k===stOf(a[3])).en}</td><td>${esc(S.dates[a[3]]||'')}</td><td>${esc(S.notes[a[3]]||'')}</td></tr>`).join('')+'</table>':'<div>No notes yet.</div>')+'</div>';
+  h+=`<div class="rblock"><h2>Opportunity Log · سِجِلُّ الفُرَص</h2>`+(S.log.length?'<table><tr><th>Date</th><th>Realm</th><th>Opportunity</th><th>Action</th><th>Outcome</th></tr>'+[...S.log].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>`<tr><td>${esc(e.date)}</td><td>${e.side==='deen'?'Deen':'Dunya'}</td><td>${esc(e.spot)}</td><td>${esc(e.action)}</td><td>${esc(e.result)}</td></tr>`).join('')+'</table>':'<div>No entries.</div>')+'</div>';
+  h+=`<div class="rblock"><h2>Next Steps · الخُطُوَات التَّالِيَة</h2><table><tr><th>Branch</th><th>Next level</th><th>Behavior</th></tr>`+TRACKS.map(t=>{const i=nextOf(t);if(i<0)return `<tr><td>${t.en}</td><td colspan="2">Complete</td></tr>`;return `<tr><td><span class="ar">${t.ar}</span> ${t.en}</td><td>L${i+1} ${t.n[i][1]}</td><td>${t.n[i][3]}</td></tr>`}).join('')+'</table></div>';
+  h+=`<div class="rblock"><h2>Ten Scholars · عُلَمَاءُ الفُرَص</h2></div>`;
+  SCH_ORDER.forEach(id=>{const s=SCH[id];h+=`<div class="rblock"><div><b><span class="ar">${s.ar}</span> · ${s.en}</b> (${s.yr}) <span style="color:#8a6d0f">[${s.tag}]</span></div><div>${s.impact}</div><div class="quote">${s.qar?`<div class="ar">${s.qar}</div>`:''}<div>${s.qen}</div><div style="color:#555;font-size:12px">Source: ${s.srcTxt}</div></div></div>`});
+  h+=`<div class="rblock" style="font-size:12px;color:#555;border-top:2px solid #c9a227;padding-top:6px">Educational reflection tool. Not a fatwa, legal or financial advice. Verify scholarly quotations against primary sources with a qualified teacher. © Creed-to-Commerce™ · The Balanced Middle Path Academy, LLC (BMPA).</div>`;
+  $('#reportSheet').innerHTML=h;
+}
+
+/* ============ PDF ============ */
+async function makePDF(){
+  showTab('report');renderReport();
+  if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){toast('PDF library not loaded; opening print dialog');return window.print()}
+  const btn=$('#btnPdf');btn.disabled=true;btn.textContent='Preparing…';
+  try{
+    await (document.fonts&&document.fonts.ready);
+    await new Promise(r=>setTimeout(r,150));
+    const el=$('#reportSheet'),sc=2,W=el.offsetWidth,total=el.scrollHeight;
+    const canvas=await html2canvas(el,{scale:sc,backgroundColor:'#ffffff',useCORS:true,windowWidth:Math.max(W,document.documentElement.clientWidth)});
+    const base=el.getBoundingClientRect().top;
+    const ends=[...el.querySelectorAll('.rblock')].map(b=>b.getBoundingClientRect().bottom-base+8);
+    const pageH=W*277/190;let start=0;const slices=[];
+    while(start<total-2){let end=start+pageH;if(end>=total)end=total;else{let best=null;ends.forEach(e=>{if(e<=end&&e>start+pageH*.35)best=e});if(best)end=best}slices.push([start,end]);start=end}
+    const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
+    slices.forEach((s,k)=>{
+      if(k)pdf.addPage();
+      const c=document.createElement('canvas');c.width=canvas.width;c.height=Math.max(1,Math.round((s[1]-s[0])*sc));
+      const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(canvas,0,Math.round(s[0]*sc),canvas.width,c.height,0,0,c.width,c.height);
+      pdf.addImage(c.toDataURL('image/jpeg',.93),'JPEG',10,8,190,(s[1]-s[0])*190/W);
+      pdf.setFontSize(8);pdf.setTextColor(110);pdf.text('Creed-to-Commerce (TM) | The Balanced Middle Path Academy, LLC (BMPA) | Page '+(k+1)+' of '+slices.length,105,292,{align:'center'});
+    });
+    pdf.save('Furas_Tree_Report_'+today()+'.pdf');toast('PDF saved');
+  }catch(e){console.error(e);toast('PDF failed; use Print / Save as PDF');}
+  btn.disabled=false;btn.textContent='⬇ Download PDF';
+}
+
+/* ============ DATA ACTIONS ============ */
+function saveJSON(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='furas_tree_data_'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast('Data file saved')}
+function loadJSON(file){const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(typeof o!=='object'||!o||!o.status)throw 0;S=Object.assign(freshState(false),o);persist();refreshAll();toast('Data loaded')}catch(e){toast('Not a valid data file')}};r.readAsText(file)}
+function removeSample(){
+  S.sampleKeys.forEach(k=>{delete S.status[k];delete S.notes[k];delete S.dates[k]});S.sampleKeys=[];S.log=S.log.filter(e=>!e.sample);
+  persist();refreshAll();toast('Sample data removed')}
+function clearAll(){if(!confirm('Erase ALL your statuses, notes, dates and log entries from this browser? This cannot be undone. (Tip: save a backup file first.)'))return;
+  S=freshState(false);try{localStorage.removeItem(KEY)}catch(e){}persist();refreshAll();toast('All data cleared')}
+
+/* ============ WIRING ============ */
+function showTab(t){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='tab-'+t));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  if(t==='report')renderReport();if(t==='journey')renderJourney();window.scrollTo({top:0})}
+function refreshAll(){
+  buildTree();buildOutline();renderPanel();renderJourney();renderScholars();renderReport();
+  const o=Math.round((sidePct('deen')+sidePct('dunya'))/2);
+  $('#overallBar').innerHTML=`<div class="sub">Overall growth: <b>${o}%</b> · Deen ${sidePct('deen')}% · Dunya ${sidePct('dunya')}%</div>${bar(o)}`;
+}
+function select(id){selected=id;buildTree();renderPanel();if(window.innerWidth<=1000)$('#panel').scrollIntoView({behavior:'smooth',block:'start'})}
+document.addEventListener('click',e=>{
+  const n=e.target.closest('.node,[data-id]');
+  if(n&&n.dataset.id&&!e.target.closest('#nav')&&!e.target.closest('#panel')){
+    if(n.closest('#tab-journey'))showTab('tree');
+    select(n.dataset.id);if(n.closest('.outline')){buildOutline();}return}
+  const sc=e.target.closest('[data-sch]');
+  if(sc){e.preventDefault();showTab('scholars');setTimeout(()=>{const el=document.getElementById('sch-'+sc.dataset.sch);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='3px solid var(--gold)';setTimeout(()=>el.style.outline='',2000)}},60);return}
+  const st=e.target.closest('#stBtns button');
+  if(st){const id=selected;S.status[id]=st.dataset.st;if(st.dataset.st==='none')delete S.status[id];adopt(id);persist();refreshAll();return}
+  const ed=e.target.closest('[data-edit]');
+  if(ed){const x=S.log.find(l=>l.id===ed.dataset.edit);if(x){editLog=x.id;$('#lgDate').value=x.date;$('#lgSide').value=x.side;$('#lgSpot').value=x.spot;$('#lgAct').value=x.action;$('#lgRes').value=x.result;$('#lgAdd').textContent='Save changes';$('#lgCancel').style.display='';$('#lgDate').scrollIntoView({behavior:'smooth',block:'center'})}return}
+  const dl=e.target.closest('[data-del]');
+  if(dl){S.log=S.log.filter(l=>l.id!==dl.dataset.del);persist();renderLog();toast('Entry deleted');return}
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('node')){e.preventDefault();select(e.target.dataset.id)}});
+document.addEventListener('input',e=>{
+  if(e.target.id==='pNote'){S.notes[selected]=e.target.value;if(!e.target.value)delete S.notes[selected];adopt(selected);persist()}
+  if(e.target.id==='pDate'){S.dates[selected]=e.target.value;if(!e.target.value)delete S.dates[selected];adopt(selected);persist()}
+  if(e.target.id==='uName'){S.name=e.target.value;persist()}
+  if(e.target.id==='uFocus'){S.focus=e.target.value;persist()}
+});
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showTab(b.dataset.tab)});
+function resetLogForm(){editLog=null;['lgSpot','lgAct','lgRes'].forEach(i=>$('#'+i).value='');$('#lgDate').value=today();$('#lgAdd').textContent='Add entry';$('#lgCancel').style.display='none'}
+$('#lgAdd').onclick=()=>{
+  const spot=$('#lgSpot').value.trim();if(!spot){toast('Describe the opportunity first');return}
+  const rec={id:editLog||('e'+Date.now()),date:$('#lgDate').value||today(),side:$('#lgSide').value,spot,action:$('#lgAct').value.trim(),result:$('#lgRes').value.trim()};
+  if(editLog){const i=S.log.findIndex(l=>l.id===editLog);S.log[i]=rec}else S.log.push(rec);
+  persist();resetLogForm();renderLog();toast('Saved')};
+$('#lgCancel').onclick=resetLogForm;
+$('#btnPdf').onclick=makePDF;
+$('#btnPrint').onclick=()=>{renderReport();window.print()};
+$('#btnSave').onclick=saveJSON;
+$('#btnLoad').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{if(e.target.files[0])loadJSON(e.target.files[0]);e.target.value=''};
+$('#btnSample').onclick=removeSample;
+$('#btnClear').onclick=clearAll;
+function setView(v){$('#treeView').style.display=v==='tree'?'':'none';$('#outlineView').style.display=v==='tree'?'none':'';$('#viewTree').classList.toggle('gold',v==='tree');$('#viewOutline').classList.toggle('gold',v!=='tree')}
+$('#viewTree').onclick=()=>setView('tree');$('#viewOutline').onclick=()=>setView('outline');
+setView(window.innerWidth<700?'outline':'tree');
+resetLogForm();refreshAll();
+</script>
+</body>
+</html>
